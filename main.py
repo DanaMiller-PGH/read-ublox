@@ -5,12 +5,16 @@ from pynmeagps import NMEAMessage
 from serial import Serial
 from  serial.tools import list_ports_osx
 
-@click.command()
-@click.option('--serial', default='u-blox GNSS receiver', help='Serial port to use.')
-@click.option('--baud', default=460800, help='Baud rate.')
-@click.option('--verbose', default=False, help='Print every message.')
 
-def main(serial, baud):
+# @click.command()
+
+
+@click.command()
+@click.option('--serial', default='u-blox GNSS receiver', show_default=True, help='Serial port to use.')
+@click.option('--baud', default=460800, show_default=True, help='Baud rate.')
+@click.option('--verbose', '-v', default=False, show_default=True, is_flag=True, type=bool, help='Print every message.')
+
+def main(serial:str, baud:int, verbose:bool):
     BAUD = 460800
     BAUD = baud
 
@@ -44,13 +48,13 @@ def main(serial, baud):
                     print("")
 
                 elif isinstance(msg, NMEAMessage) and hasattr(msg,"lat"):
-                    continue
+                    if not verbose: continue
                     print(f"NMEA: {msg_count: 6d}, id: {msg.identity}", end="")
                     print (f", lat: {msg.lat}, lon:{msg.lon}", end="")
                     print("")
                         # fixtype = FIXTYPE[msg.fixType] # type: ignore
         except KeyboardInterrupt as k:
-            print("\nShutting down\n")
+            print("\n<ctrl>C received. Shutting down\n")
             return 0
 
 
